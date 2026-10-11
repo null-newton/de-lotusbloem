@@ -16,7 +16,7 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-Vul in `.env.local` de Supabase-project-URL en publieke publishable/anon-key in. Gebruik **nooit** een service-role-key in een `VITE_`-variabele. `.env.local` staat buiten versiebeheer. `pnpm-workspace.yaml` en `.npmrc` gebruiken `nodeLinker: hoisted`, zodat het project ook op een exFAT-schijf zonder symlinks kan worden geïnstalleerd.
+Vul in `.env.local` de Supabase-project-URL en publieke publishable/anon-key in. Gebruik **nooit** een service-role-key in een `VITE_`-variabele. `.env.local` staat buiten versiebeheer. `pnpm-workspace.yaml` gebruikt `nodeLinker: hoisted`, zodat het project ook op een exFAT-schijf zonder symlinks kan worden geïnstalleerd.
 
 ```sh
 pnpm build
