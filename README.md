@@ -1,4 +1,4 @@
-# De Lotusbloem
+# Nefertem
 
 Nederlandstalige praktijkwebsite voor **Veronique Wostyn**, schoonheidsspecialist en thuisverpleegkundige in Roeselare. Adres: Stationsdreef 215, 8800 Roeselare, België.
 

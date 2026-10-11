@@ -1,4 +1,4 @@
--- De Lotusbloem: uitvoeren in de Supabase SQL Editor (eenmalig).
+-- Nefertem: uitvoeren in de Supabase SQL Editor (eenmalig).
 begin;
 create table public.admins (user_id uuid primary key references auth.users(id) on delete cascade);
 alter table public.admins enable row level security;
@@ -24,7 +24,7 @@ create table public.practice_settings (
   id integer primary key check(id=1), email text not null default '', phone text not null default '', address text not null default '',
   region text not null default '', about text not null default '', logo_url text not null default ''
 );
-insert into public.practice_settings(id,address,region,about) values(1,'Stationsdreef 215, 8800 Roeselare, België','Roeselare','Ik ben Veronique Wostyn, het gezicht achter De Lotusbloem. Hier komen schoonheidsverzorging en thuisverpleging samen. Met een persoonlijke benadering, een rustig gesprek en tijd voor wat jij nodig hebt.');
+insert into public.practice_settings(id,address,region,about) values(1,'Stationsdreef 215, 8800 Roeselare, België','Roeselare','Ik ben Veronique Wostyn, het gezicht achter Nefertem. Hier komen schoonheidsverzorging en thuisverpleging samen. Met een persoonlijke benadering, een rustig gesprek en tijd voor wat jij nodig hebt.');
 create table public.inventory (
   product_id uuid primary key references public.products(id) on delete cascade,
   quantity integer not null default 0 check(quantity>=0), minimum integer not null default 3 check(minimum>=0), sku text not null default ''
