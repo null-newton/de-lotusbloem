@@ -4,7 +4,7 @@ import { demoProducts, demoPosts, defaultSettings } from './demo'
 import { supabase } from './lib/supabase'
 type DataState = { products: Product[]; posts: Post[]; inventory: Inventory[]; movements: Movement[]; settings: Settings }
 const initial: DataState = { products: [], posts: [], inventory: [], movements: [], settings: defaultSettings }
-type DataContext = DataState & { loading: boolean; error: string; demo: boolean; reload: (admin?: boolean) => Promise<void>; enterDemo: () => void; save: (table: string, value: object) => Promise<void>; remove: (table: string, id: string) => Promise<void>; adjust: (id: string, delta: number, note: string) => Promise<void> }
+type DataContext = DataState & { loading: boolean; error: string; demo: boolean; reload: (admin?: boolean) => Promise<void>; enterDemo: () => void; save: (table: string, value: object) => Promise<void>; setPublished: (table: 'products' | 'posts', id: string, published: boolean) => Promise<void>; remove: (table: string, id: string) => Promise<void>; adjust: (id: string, delta: number, note: string) => Promise<void> }
 const Context = createContext<DataContext>(null!)
 export function DataProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<DataState>(initial)
@@ -50,6 +50,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
       const { error } = result
       if (error) throw new Error(error.message)
       await reload(true)
+    },
+    setPublished: async (table, id, published) => {
+      if (!demo) {
+        if (!supabase) throw new Error('Supabase is niet ingesteld.')
+        const { error } = await supabase.from(table).update({ published }).eq('id', id).select('id').single()
+        if (error) throw new Error('De zichtbaarheid kon niet worden opgeslagen. Probeer opnieuw.')
+      }
+      setData(current => {
+        const next = { ...current, [table]: current[table].map(item => item.id === id ? { ...item, published } : item) }
+        if (demo) localStorage.setItem('lotusbloem-demo-v1', JSON.stringify(next))
+        return next
+      })
     },
     remove: async (table, id) => {
       if (demo) { const next = { ...data }; if (table === 'products') { next.products = data.products.filter(x => x.id !== id); next.inventory = data.inventory.filter(x => x.product_id !== id); next.movements = data.movements.filter(x => x.product_id !== id) } else next.posts = data.posts.filter(x => x.id !== id); updateDemo(next); return }

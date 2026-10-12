@@ -5,3 +5,5 @@ dist/
 *.log
 *.tsbuildinfo
 test-results/
+supabase/functions/.env.local
+supabase/.temp/

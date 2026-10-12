@@ -51,6 +51,30 @@ De publieke sleutel geeft geen beheerrechten. Alleen gebruikers in `admins` kunn
 
 Op het inlogscherm kan een expliciete **voorbeeldomgeving** worden geopend. Deze gebruikt fictieve inhoud in browser-localStorage, geen Supabase-login of database. Die gegevens zijn duidelijk gemarkeerd. Afsluiten herlaadt de echte omgeving. Zonder Supabase-configuratie opent de publieke site met gemarkeerde voorbeeldinhoud. Met configuratie worden fouten getoond in plaats van stilzwijgend fictieve databasegegevens te gebruiken.
 
+## Afbeeldingen uploaden via ImgBB
+
+Bij producten, diensten en berichten kun je een bestand kiezen of een bestaande HTTPS-afbeeldingslink plakken. De uploadfunctie stuurt het bestand naar ImgBB en vult de directe afbeeldings-URL automatisch in. Alleen de URL wordt bij het aanbod of bericht opgeslagen; er is geen Supabase Storage-bucket nodig. Uploaden accepteert JPG, PNG, WebP en GIF tot 5 MB en is uitsluitend beschikbaar voor ingelogde beheerders. De voorbeeldomgeving ondersteunt alleen afbeeldingslinks.
+
+De ImgBB-sleutel staat uitsluitend in `IMGBB_API_KEY` op de server. Gebruik hiervoor nooit een `VITE_`-variabele. Het lokale bestand `supabase/functions/.env.local` staat buiten Git. Bij een nieuwe installatie kun je `supabase/functions/.env.example` kopiëren naar dat bestand en je sleutel invullen.
+
+Activeer de functie eenmalig vanuit de projectmap:
+
+```sh
+npx supabase login
+npx supabase secrets set --env-file supabase/functions/.env.local --project-ref blpuugluwakptppjnsmi
+npx supabase functions deploy upload-image --project-ref blpuugluwakptppjnsmi
+```
+
+Gebruik bij een ander Supabase-project diens project-ID. De functiespecifieke `verify_jwt = false` in `supabase/config.toml` laat de functie zelf het gebruiker-token controleren via Supabase Auth. De functie controleert daarna `is_admin` met dezelfde gebruikerrechten, voordat een bestand naar ImgBB wordt verstuurd. De API-sleutel, ImgBB-foutdetails en verwijderlinks worden niet teruggestuurd naar de browser.
+
+De afbeelding wordt geüpload zodra je een bestand kiest. Sla daarna het bericht of aanbod op om de URL te bewaren. Het verwijderen van de afbeelding uit het formulier, het annuleren van een formulier of het verwijderen van een bericht verwijdert de upload niet van ImgBB; beheer die afbeeldingen via ImgBB. Er wordt geen automatische vervaldatum ingesteld.
+
+Controleer na activatie een echte upload met je beheeraccount. Lokaal kun je de servercontroles testen zonder uploads naar ImgBB:
+
+```sh
+deno test supabase/functions/upload-image/handler_test.ts
+```
+
 ## Publicatie
 
 `pnpm build` maakt `dist/`. De workflow `.github/workflows/deploy.yml` bouwt en publiceert automatisch na een push naar `main`.
